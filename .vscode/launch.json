@@ -13,7 +13,6 @@
             "internalConsoleOptions": "openOnSessionStart",
             "args": [
                 "runserver",
-                "--noreload",
                 "--nothreading"
             ],
             "django": true
