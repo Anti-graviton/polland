@@ -28,9 +28,15 @@ class Question(models.Model):
     title = models.CharField(max_length=500)
     body = models.TextField(max_length=2000)
 
+    def __str__(self):
+        return "[{}]: {}".format(self.title, self.body)
+
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_type = models.IntegerField(default=ChoiceType.Selectable)
     value = models.TextField()
     weight = models.IntegerField(default=1)
+
+    def __str__(self):
+        return self.value
