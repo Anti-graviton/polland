@@ -34,7 +34,8 @@ class Question(models.Model):
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_type = models.IntegerField(default=ChoiceType.Selectable)
+    choice_type = models.CharField(max_length=1,
+                                   default=ChoiceType.Selectable)
     value = models.TextField()
     weight = models.IntegerField(default=1)
 
