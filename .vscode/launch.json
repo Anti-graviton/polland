@@ -9,13 +9,13 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}\\src\\manage.py",
-            "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart",
             "args": [
                 "runserver",
+                "--noreload",
                 "--nothreading"
             ],
             "django": true
+
         }
     ]
 }
