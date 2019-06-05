@@ -1,10 +1,10 @@
-# Intorduction
+# Introduction
 
 // TODO
 
 # How to compile
 
-First make sure you have the lates python installed and accessible in your terminal of choice.
+First make sure you have the latest python installed and accessible in your terminal of choice.
 
 **[Optional]**
 
