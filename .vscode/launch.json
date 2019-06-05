@@ -5,11 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Run bot",
+            "name": "Python: Django - Bot",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/src/mattermost_bot/polland_bot.py",
-            "console": "integratedTerminal"
+            "program": "${workspaceFolder}\\src\\manage.py",
+            "args": [
+                "mattermost_bot"
+            ],
+            "django": true
         },
         {
             "name": "Python: Django",
