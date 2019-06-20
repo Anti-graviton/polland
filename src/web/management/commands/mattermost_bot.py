@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
         try:
             polland_bot: Bot = Bot()
-            polland_bot._plugins.plugins.append('mattermost_bot.plugins')
+            polland_bot._plugins.plugins.append('bot.plugins')
             polland_bot.run()
         except KeyboardInterrupt:
             pass
