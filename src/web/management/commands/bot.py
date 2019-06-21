@@ -1,24 +1,17 @@
 import logging
-import sys
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from mmpy_bot.bot import Bot
+
+from bot import mattermost_bot
 
 
 class Command(BaseCommand):
     def handle(self, **options):
 
-        logging.basicConfig(**{
-            'format': '[%(asctime)s] %(message)s',
-            'datefmt': '%m/%d/%Y %H:%M:%S',
-            'level': logging.DEBUG,
-            'stream': sys.stdout,
-        })
-
         try:
-            polland_bot: Bot = Bot()
-            polland_bot._plugins.plugins.append('bot.plugins')
-            polland_bot.run()
+            bot = mattermost_bot.PollandBot()
+            bot.start()
         except KeyboardInterrupt:
+            logging.error('stopping but due to keyboard interrupt')
             pass
