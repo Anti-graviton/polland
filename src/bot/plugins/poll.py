@@ -1,5 +1,5 @@
 import re
-import os
+import logging
 
 from mmpy_bot.bot import respond_to
 from mmpy_bot.dispatcher import Message
@@ -27,3 +27,13 @@ def get_question_list(msg: Message):
             question_str += "---"
 
             msg.reply(question_str)
+
+
+@respond_to('q:(.*) a:(.*)', re.IGNORECASE)
+def answer_question(msg: Message, question_id: str, answer_id: str):
+    # TODO: log user information
+    # TODO: update user answer
+    logging.info("message: ", msg)
+    logging.info("question_id: ", question_id)
+    logging.info("answer_id: ", answer_id)
+    msg.reply_thread("answer marked!")
