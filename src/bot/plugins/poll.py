@@ -1,39 +1,72 @@
+"""
+module imports
+"""
+import os
 import re
-import logging
 
+from django.db.models.query import QuerySet
 from mmpy_bot.bot import respond_to
 from mmpy_bot.dispatcher import Message
 
-from web.models import Question, Choice, ChoiceType
+from web.models import Choice, Question
+
+from ..services.question_service import QuestionService
+
+QUESTION_SERVICE = QuestionService()
 
 
 @respond_to('list', re.IGNORECASE)
 def get_question_list(msg: Message):
-    all_questions = Question.objects.order_by(
-        '-publish_date').all().prefetch_related('choices')
+    """
+    hadnle the list command
+    """
+    msg.reply_thread('بذار ببینم چه سوالایی رو می‌تونی جواب بدی... :thinking:')
 
-    if Question.objects.count() == 0:
+    all_questions: QuerySet = QUESTION_SERVICE.list()
+
+    if all_questions.count() == 0:
         msg.reply_thread(
-            'Sorry, there are currently no questions in the database.')
+            'ببخشید ولی مثکه دستمون خالیه، سوالی برای جواب دادن نیست :disappointed_relieved:')
     else:
-        for idx, q in enumerate(all_questions):
-            question_str = "{}. {}".format(idx+1, q.title)
-            question_str += os.linesep
-            choices = [c for c in q.choices.values()]
-            for cidx, c in enumerate(choices):
-                question_str += "{}/{}. {}{}".format(
-                    idx+1, cidx+1, c['value'], os.linesep)
-            question_str += os.linesep
-            question_str += "---"
 
+        for question in all_questions:
+            question_str = get_question_representation(question)
             msg.reply(question_str)
 
 
 @respond_to('q:(.*) a:(.*)', re.IGNORECASE)
 def answer_question(msg: Message, question_id: str, answer_id: str):
+    """
+    Mark a question as answerd with specific answer for a user
+    """
     # TODO: log user information
     # TODO: update user answer
-    logging.info("message: ", msg)
-    logging.info("question_id: ", question_id)
-    logging.info("answer_id: ", answer_id)
-    msg.reply_thread("answer marked!")
+    question: Question = QUESTION_SERVICE.get_question_with_id(question_id)
+    q_answer: Choice = question.choices.get(id=int(answer_id))
+    msg.reply_thread("You just answered question: {} with option: {}".format(
+        question, q_answer.value))
+
+
+def get_question_representation(question: Question):
+    """
+    generate question and it's choices string representation
+    """
+    question_str = "{}. {}{}".format(question.id, question.title, os.linesep)
+    for choice in question.choices.all():
+        question_str += create_question_answers(question, choice)
+    question_str += os.linesep
+
+    question_str += "***"
+    return question_str
+
+
+def create_question_answers(question: Question, choice: Choice) -> str:
+    """
+    generate a choice string representation
+    """
+    result = "{}-{}. {}{}"\
+        .format(question.id,
+                choice.id,
+                choice.value,
+                os.linesep)
+    return result
