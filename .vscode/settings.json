@@ -1,7 +1,10 @@
 {
     "python.pythonPath": "env\\Scripts\\python.exe",
-    "python.linting.enabled": false,
+    "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+        "--load-plugins=pylint_django"
+    ],
     "python.envFile": "${workspaceFolder}/.env",
     "files.exclude": {
         "**/.git": true,
