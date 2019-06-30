@@ -32,7 +32,16 @@ class UserAnswer(models.Model):
         unique_together = (('user_id', 'question_id'),)
 
     answer_date = models.DateTimeField(auto_now=True)
-    user_name = models.CharField(max_length=100)
+    user_id = models.CharField(max_length=100)
+    question_id = models.IntegerField()
+    answer_id = models.IntegerField()
+
+
+class UserAnswerHistory(models.Model):
+    """
+    User answers history for each question
+    """
+    answer_date = models.DateTimeField(auto_now=True)
     user_id = models.CharField(max_length=100)
     question_id = models.IntegerField()
     answer_id = models.IntegerField()
