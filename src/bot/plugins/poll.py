@@ -3,12 +3,13 @@ module imports
 """
 import os
 import re
+import datetime
 
 from django.db.models.query import QuerySet
 from mmpy_bot.bot import respond_to
 from mmpy_bot.dispatcher import Message
 
-from web.models import Choice, Question
+from web.models import Choice, Question, UserAnswer
 
 from ..services.question_service import QuestionService
 
@@ -18,7 +19,7 @@ QUESTION_SERVICE = QuestionService()
 @respond_to('list', re.IGNORECASE)
 def get_question_list(msg: Message):
     """
-    hadnle the list command
+    handle the list command
     """
     msg.reply_thread('بذار ببینم چه سوالایی رو می‌تونی جواب بدی... :thinking:')
 
@@ -34,17 +35,34 @@ def get_question_list(msg: Message):
             msg.reply(question_str)
 
 
-@respond_to('q:(.*) a:(.*)', re.IGNORECASE)
+@respond_to('(.*)-(.*)', re.IGNORECASE)
 def answer_question(msg: Message, question_id: str, answer_id: str):
     """
     Mark a question as answerd with specific answer for a user
     """
-    # TODO: log user information
-    # TODO: update user answer
-    question: Question = QUESTION_SERVICE.get_question_with_id(question_id)
-    q_answer: Choice = question.choices.get(id=int(answer_id))
-    msg.reply_thread("You just answered question: {} with option: {}".format(
-        question, q_answer.value))
+    try:
+        question: Question = QUESTION_SERVICE.get_question_with_id(question_id)
+        q_answer: Choice = question.choices.get(id=int(answer_id))
+        user_id = user_name = msg.body['data']['sender_name']
+        obj, created = UserAnswer.objects\
+            .update_or_create(user_id=user_id,
+                              question_id=question.id,
+                              defaults={
+                                  'answer_date': datetime.datetime.now(),
+                                  'answer_id': q_answer.id,
+                                  'question_id': question.id,
+                                  'user_name': user_name,
+                                  'user_id': user_id
+                              })
+
+        obj.save()
+
+        if created:
+            msg.reply('نظر شما به سوال فوق ثبت شد!')
+        else:
+            msg.reply('نظر شما به سوال فوق عوض شد!')
+    except Exception:
+        msg.reply_thread('خطا! داده‌های ورودی رو بررسی کن و دوباره تلاش کن.')
 
 
 def get_question_representation(question: Question):
